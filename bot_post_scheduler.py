@@ -1,13 +1,10 @@
+import os
 import time
 import telebot
 
-# Inserisci qui il token del tuo bot Telegram
-BOT_TOKEN = "7767035120:AAH5E7wLW5KmRa5q-fJSXEap0vDle8mBvsI"
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHANNEL_ID = os.getenv("CHANNEL_ID")
 
-# Inserisci qui l'username del canale (con @) oppure l'ID numerico (es. -1001234567890)
-CHANNEL_ID = "@metodogold"
-
-# Lista dei post da pubblicare (testo semplice)
 posts = [
     "💡 **3 modi semplici per iniziare a guadagnare online oggi**\n\n"
     "1️⃣ Iscriviti a programmi di affiliazione (Amazon, Binance, ecc.)\n"
@@ -53,3 +50,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
