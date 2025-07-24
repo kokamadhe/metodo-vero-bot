@@ -1,53 +1,37 @@
 import os
-import time
-import telebot
+from telegram import Bot
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-CHANNEL_ID = os.getenv("CHANNEL_ID")
+# Set your bot token and channel ID
+TOKEN = os.getenv("BOT_TOKEN")
+CHANNEL_ID = "@metodogold"
+POST_FOLDER = "posts"
+TRACK_FILE = "last_post.txt"
 
-posts = [
-    "💡 **3 modi semplici per iniziare a guadagnare online oggi**\n\n"
-    "1️⃣ Iscriviti a programmi di affiliazione (Amazon, Binance, ecc.)\n"
-    "2️⃣ Usa app di cashback e sondaggi retribuiti\n"
-    "3️⃣ Crea contenuti su social e monetizza (YouTube, TikTok, Instagram)\n\n"
-    "📌 Segui il canale per approfondire ogni metodo nei prossimi post!",
+bot = Bot(token=TOKEN)
 
-    "⚠️ **Mai investire senza sapere cosa stai facendo!**\n\n"
-    "Molti perdono soldi perché partono senza conoscenze.\n"
-    "Prima di investire, studia, prova metodi demo, fai domande.\n\n"
-    "🧠 Ricorda: il guadagno serio nasce dalla preparazione, non dalla fortuna.",
+def get_next_post():
+    try:
+        with open(TRACK_FILE, "r") as f:
+            last = int(f.read().strip())
+    except:
+        last = 0
 
-    "🛠️ **App gratuita per tracciare i tuoi guadagni**\n\n"
-    "Consiglio di usare “Money Manager” (disponibile su Android e iOS) per tenere sotto controllo entrate e uscite.\n\n"
-    "📊 Conoscere bene le tue finanze è il primo passo per crescere.",
+    next_post = last + 1
+    post_path = f"{POST_FOLDER}/post{next_post}.txt"
 
-    "🎯 **Come Luca ha iniziato con 0€ e ora guadagna extra**\n\n"
-    "Luca ha iniziato seguendo semplici consigli di affiliazione.\n"
-    "Ha dedicato 30 minuti al giorno per creare contenuti e condividere link.\n"
-    "Ora ha un guadagno extra mensile di 200€-300€.\n\n"
-    "💪 Anche tu puoi farcela, basta costanza!",
+    if os.path.exists(post_path):
+        with open(post_path, "r", encoding="utf-8") as f:
+            content = f.read()
 
-    "❓ **Qual è la tua esperienza con il guadagno online?**\n\n"
-    "Scrivi nei commenti o rispondi qui:\n"
-    "➡️ Hai già provato qualche metodo?\n"
-    "➡️ Quale ti piacerebbe approfondire?\n"
-    "➡️ Qual è la tua più grande difficoltà?\n\n"
-    "🤝 Condividere aiuta a crescere insieme!"
-]
+        # Invia messaggio su Telegram
+        bot.send_message(chat_id=CHANNEL_ID, text=content, parse_mode="Markdown")
 
-def main():
-    bot = telebot.TeleBot(BOT_TOKEN)
-
-    for post in posts:
-        try:
-            bot.send_message(CHANNEL_ID, post, parse_mode="Markdown")
-            print(f"Post inviato con successo:\n{post}\n")
-        except Exception as e:
-            print(f"Errore nell'invio del post: {e}")
-
-        # Aspetta 2 ore (7200 secondi) prima del prossimo post
-        time.sleep(7200)
+        # Aggiorna file di tracking
+        with open(TRACK_FILE, "w") as f:
+            f.write(str(next_post))
+    else:
+        print("✅ Tutti i post sono già stati pubblicati.")
 
 if __name__ == "__main__":
-    main()
+    get_next_post()
 
